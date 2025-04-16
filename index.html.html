@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>BCM Spel - Twine Versie</title>
+  <script>
+    var budget = 1000000;
+    var downtime = 0;
+    var reputatie = 5;
+
+    function updateStats(cost, dt, repDiff) {
+      budget -= cost;
+      downtime += dt;
+      reputatie += repDiff;
+      document.getElementById("stats").innerHTML =
+        "💰 Budget: €" + budget.toLocaleString() + "<br>" +
+        "🕒 Downtime: " + downtime + " dagen<br>" +
+        "🌟 Reputatie: " + "★".repeat(Math.max(0, reputatie));
+    }
+  </script>
+</head>
+<body style="font-family: Arial, sans-serif; padding: 20px;">
+  <h1>BCM Spel - Business Continuity Game</h1>
+  <div id="game">
+    <div id="stats" style="background: #eee; padding: 10px; margin-bottom: 20px;">
+      💰 Budget: €1.000.000<br>
+      🕒 Downtime: 0 dagen<br>
+      🌟 Reputatie: ★★★★★
+    </div>
+
+    <div id="scenario">
+      <h2>Scenario 1: Cyberaanval</h2>
+      <p>Een ransomware-aanval legt jullie netwerk plat. Hoe reageren jullie?</p>
+      <button onclick="updateStats(250000, 0, 0); showScenario(1);">A: Investeer €250.000 in back-ups en security</button><br><br>
+      <button onclick="updateStats(75000, 1, -1); showScenario(1);">B: Investeer €75.000 in basismaatregelen</button><br><br>
+      <button onclick="updateStats(0, 5, -3); showScenario(1);">C: Geen actie</button>
+    </div>
+  </div>
+
+  <script>
+    const scenarios = [
+      {
+        title: "Scenario 2: Stroomstoring",
+        text: "Door een regionale storing valt de stroom in jullie datacenter uit.",
+        choices: [
+          ["A: Investeer €150.000 in noodgeneratoren", 150000, 0, 0],
+          ["B: Gebruik batterijen (€30.000)", 30000, 4, -1],
+          ["C: Geen voorzieningen", 0, 48, -2]
+        ]
+      },
+      {
+        title: "Scenario 3: Personeelsuitval",
+        text: "Een griepgolf treft je personeel. 30% valt uit.",
+        choices: [
+          ["A: Investeer €80.000 in tijdelijke krachten", 80000, 0, 0],
+          ["B: Beperk openingstijden", 0, 0, -1],
+          ["C: Negeer het probleem", 0, 7, -2]
+        ]
+      },
+      {
+        title: "Scenario 4: Datalek",
+        text: "Een werknemer lekt klantgegevens.",
+        choices: [
+          ["A: Investeer €100.000 in communicatie", 100000, 0, 0],
+          ["B: Stilhouden en intern oplossen", 0, 0, -1],
+          ["C: Negeer het incident", 0, 0, -3]
+        ]
+      },
+      {
+        title: "Scenario 5: Brand in het datacenter",
+        text: "Er is een brand in het datacenter. Het systeem valt tijdelijk uit.",
+        choices: [
+          ["A: Installeer automatische brandblussystemen (€200.000)", 200000, 0, 0],
+          ["B: Beperk de schade met handmatige blusapparatuur (€50.000)", 50000, 2, -1],
+          ["C: Wacht af, het wordt vanzelf opgelost", 0, 12, -2]
+        ]
+      },
+      {
+        title: "Scenario 6: Hacktivisme-aanval",
+        text: "Een groep hacktivisten valt jullie netwerk aan uit protest.",
+        choices: [
+          ["A: Verhoog de beveiliging met €100.000", 100000, 0, 0],
+          ["B: Laat ze hun gang gaan en beantwoord hun eisen", 0, 3, -1],
+          ["C: Publiceer een verklaring en negeer de aanval", 0, 0, -2]
+        ]
+      },
+      {
+        title: "Scenario 7: Verlies van leverancier",
+        text: "Een belangrijke leverancier heeft zijn activiteiten gestaakt.",
+        choices: [
+          ["A: Vind een nieuwe leverancier, kost €150.000", 150000, 0, 0],
+          ["B: Heronderhandel de voorwaarden met andere leveranciers", 0, 2, -1],
+          ["C: Stop met de samenwerking en zoek intern een oplossing", 0, 5, -2]
+        ]
+      },
+      {
+        title: "Scenario 8: Wetgeving verandert",
+        text: "Nieuwe wetgeving dwingt jullie bedrijf om te investeren in compliance.",
+        choices: [
+          ["A: Volledig voldoen aan wetgeving, kost €200.000", 200000, 0, 0],
+          ["B: Voldoen aan de minimale vereisten, kost €50.000", 50000, 1, -1],
+          ["C: Negeer de wetgeving en neem het risico", 0, 0, -3]
+        ]
+      },
+      {
+        title: "Scenario 9: Sociale media crisis",
+        text: "Een klant klaagt publiekelijk over een product. Het wordt viraal.",
+        choices: [
+          ["A: Reageer snel met een openbaar excuus en oplossing", 50000, 0, 2],
+          ["B: Negeer het en wacht tot het voorbijgaat", 0, 5, -2],
+          ["C: Verwijder de klacht en hoop dat niemand het opmerkt", 0, 0, -3]
+        ]
+      },
+      {
+        title: "Scenario 10: Bedrijfsovername",
+        text: "Je bedrijf wordt overgenomen door een grotere speler. Dit kan gevolgen hebben.",
+        choices: [
+          ["A: Zorg voor een soepele overgang met extra communicatie", 100000, 0, 0],
+          ["B: Maak het interne proces moeilijker om onafhankelijk te blijven", 0, 3, -1],
+          ["C: Accepteer de overname zonder actie", 0, 0, -2]
+        ]
+      }
+    ];
+
+    let currentScenario = 0;
+
+    function showScenario(index) {
+      currentScenario++;
+      if (currentScenario > scenarios.length) {
+        showEnd();
+        return;
+      }
+      const sc = scenarios[currentScenario - 1];
+      let html = `<h2>${sc.title}</h2><p>${sc.text}</p>`;
+      for (let i = 0; i < sc.choices.length; i++) {
+        const [label, cost, dt, rep] = sc.choices[i];
+        html += `<button onclick="updateStats(${cost}, ${dt}, ${rep}); showScenario(${currentScenario});">${label}</button><br><br>`;
+      }
+      document.getElementById("scenario").innerHTML = html;
+    }
+
+    function showEnd() {
+      document.getElementById("scenario").innerHTML = `
+        <h2>✅ Eindresultaat</h2>
+        <p>Bekijk samen je keuzes:</p>
+        <ul>
+          <li>💰 Resterend budget: €${budget.toLocaleString()}</li>
+          <li>🕒 Totale downtime: ${downtime} dagen</li>
+          <li>🌟 Reputatie: ${"★".repeat(Math.max(0, reputatie))}</li>
+        </ul>
+        <p>Wat ging goed? Wat zou je anders doen?</p>
+      `;
+    }
+  </script>
+</body>
+</html>
